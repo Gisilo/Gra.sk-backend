@@ -1,5 +1,5 @@
 """
-ASGI config for Graph2DB_backend project.
+ASGI config for Grask_backend project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Graph2DB_backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Grask_backend.settings')
 
 application = get_asgi_application()
