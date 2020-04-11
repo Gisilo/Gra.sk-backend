@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from jsonfield import JSONField
-from datetime import date
 
 
 # Create your models here.
