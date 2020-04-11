@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
+
 from django.db import models
 from jsonfield import JSONField
+from datetime import date
 
 
 # Create your models here.
@@ -16,8 +18,8 @@ class Grabit(models.Model):
     name_db = models.CharField(max_length=200, null=True)
     dbms = models.CharField(max_length=6, choices=DBMS, null=True)
     description = models.TextField(blank=True, null=True)
-    port = models.IntegerField()
-    folder = models.FilePathField()
+    port = models.IntegerField(null=True, blank=True)
+    #folder = models.FilePathField(null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
     graph = JSONField(null=True)
