@@ -24,7 +24,7 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
     grabit = graphene.Field(GrabitNode)
 
     class Input:
-        name_project = graphene.String()
+        name_project = graphene.String(required=True)
         name_db = graphene.String()
         dbms = graphene.String()
         description = graphene.String()
