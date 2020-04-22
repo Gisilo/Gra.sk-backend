@@ -78,7 +78,7 @@ class GraphQLTestCase(TestCase):
                 }
               ]
             }
-          }
+        }
         self.assertResponseNoErrors(resp, exp)
 
     def test_mutation_grabit(self):
@@ -94,7 +94,6 @@ class GraphQLTestCase(TestCase):
                 nameProject
               }
               }
-              
             }
             ''',
             # The operation name (from the 1st line of the mutation)
@@ -106,6 +105,5 @@ class GraphQLTestCase(TestCase):
                 "nameProject": "pro_create_mutation1"
               }
             }
-
         }
         self.assertResponseNoErrors(resp, exp)

@@ -52,5 +52,26 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
         return CreateGrabit(grabit=grabit)
 
 
+class DeleteGrabit(graphene.relay.ClientIDMutation):
+    msg = graphene.Field(type=graphene.String)
+    grabit = graphene.Field(GrabitNode)
+
+    class Input:
+        name_project = graphene.String(required=True)
+        name_db = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        obj = Grabit.objects.get(name_project=input["name_project"])
+        try:
+            obj.delete()
+            msg = "Succesfull delete project {}".format(input["name_project"])
+        except:
+            msg = "Can't delete project {}".format(input["name_project"])
+        print(msg)
+        return DeleteGrabit(msg=msg, grabit=obj)
+
+
 class Mutation(graphene.AbstractType):
     create_grabit = CreateGrabit.Field()
+    delete_grabit = DeleteGrabit.Field()
