@@ -21,6 +21,7 @@ class Query(graphene.ObjectType):
 
 
 class CreateGrabit(graphene.relay.ClientIDMutation):
+    msg = graphene.String()
     grabit = graphene.Field(GrabitNode)
 
     class Input:
@@ -37,19 +38,20 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
 
-        grabit = Grabit(
-            name_project=input.get("name_project"),
-            name_db=input.get("name_db"),
-            dbms=input.get("dbms"),
-            description=input.get("description"),
-            port=input.get("port"),
-            created_date=input.get("created_date"),
-            update_date=input.get("update_date"),
-            graph = input.get("graph"),
-        )
-        grabit.save()
+        try:
+            new_grabit, created = Grabit.objects.update_or_create(name_project=input.get("name_project"), defaults=input)
 
-        return CreateGrabit(grabit=grabit)
+            if created:
+                msg = "Created new project {}".format(input.get("name_project"))
+
+            msg = "Update project {}".format(input.get("name_project"))
+
+        except:
+            msg = "Can't create or update project {}".format(input["name_project"])
+
+
+        #grabit.save()
+        return CreateGrabit(msg=msg, grabit=new_grabit)
 
 
 class DeleteGrabit(graphene.relay.ClientIDMutation):
@@ -65,7 +67,7 @@ class DeleteGrabit(graphene.relay.ClientIDMutation):
         obj = Grabit.objects.get(name_project=input["name_project"])
         try:
             obj.delete()
-            msg = "Succesfull delete project {}".format(input["name_project"])
+            msg = "Successful delete project {}".format(input["name_project"])
         except:
             msg = "Can't delete project {}".format(input["name_project"])
         print(msg)
