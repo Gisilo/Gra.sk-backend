@@ -81,7 +81,7 @@ class GraphQLTestCase(TestCase):
         }
         self.assertResponseNoErrors(resp, exp)
 
-    def test_mutation_grabit(self):
+    def test_create_grabit(self):
         resp = self.query(
             # The mutation's graphql code
             '''
@@ -107,3 +107,32 @@ class GraphQLTestCase(TestCase):
             }
         }
         self.assertResponseNoErrors(resp, exp)
+
+    def test_delete_grabit(self):
+        resp = self.query(
+            # The mutation's graphql code
+            '''
+            mutation DeleteGrabitByName{
+                    deleteGrabit(
+                        input: {
+                            nameProject: "pro_prova_1"
+                    }){
+                        msg
+                    }
+                }
+            ''',
+            # The operation name (from the 1st line of the mutation)
+            op_name='DeleteGrabitByName'
+        )
+        exp = {
+            "deleteGrabit": {
+                "msg": "Successful delete project pro_prova_1"
+            }
+        }
+        self.assertResponseNoErrors(resp, exp)
+
+
+
+
+
+
