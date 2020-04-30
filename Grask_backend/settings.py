@@ -127,12 +127,12 @@ GRAPHENE = {
     'SCHEMA': 'Grask_backend.schema.schema' # Where your Graphene schema lives
 }
 
-CORS_ORIGIN_ALLOW_ALL = DEBUG
+CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ALLOW_CREDENTIALS = DEBUG
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost',
+    'http://localhost:3000',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
