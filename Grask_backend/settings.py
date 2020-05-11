@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware', #TODO
+    #'django.middleware.csrf.CsrfViewMiddleware', #TODO
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -118,7 +118,8 @@ GRAPHENE = {
     'SCHEMA': 'Grask_backend.schema.schema' # Where your Graphene schema lives
 }
 
-CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8000'
-]
+    'http://graskserver',
+    ]
+
+CORS_ALLOW_CREDENTIALS = True
