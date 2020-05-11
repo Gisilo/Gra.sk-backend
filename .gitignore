@@ -2,6 +2,9 @@ venv/
 
 .idea/
 
+.env.dev
+static/
+assets/
 
 # Created by https://www.gitignore.io/api/django,python
 # Edit at https://www.gitignore.io/?templates=django,python
