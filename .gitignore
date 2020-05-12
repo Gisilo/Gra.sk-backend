@@ -3,6 +3,7 @@ venv/
 .idea/
 
 .env.dev
+.env.prod
 static/
 assets/
 
