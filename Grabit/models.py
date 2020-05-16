@@ -21,7 +21,7 @@ class Grabit(models.Model):
     #folder = models.FilePathField(null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
-    graph = JSONField(null=True)
+    graph = JSONField(default=list)
 
     #p = Project(name_project='Manager', name_db='ManagerDB', dbms='SQLite', description='Database del manager del sistema', port=8000, folder='C:\\Users\\Utente\\Desktop\\django\\serverdb\\manager', graph=None)
 
