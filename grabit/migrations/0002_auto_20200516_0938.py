@@ -7,7 +7,7 @@ import jsonfield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Grabit', '0001_initial'),
+        ('grabit', '0001_initial'),
     ]
 
     operations = [
