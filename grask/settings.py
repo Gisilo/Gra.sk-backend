@@ -119,7 +119,7 @@ GRAPHENE = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    'http://graskserver',
+    'http://graskserver', # TODO
     ]
 
 CORS_ALLOW_CREDENTIALS = True
