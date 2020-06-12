@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware', #TODO
+    # 'django.middleware.csrf.CsrfViewMiddleware', TODO
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -115,11 +115,17 @@ STATIC_URL = '/assets/'
 STATIC_ROOT = 'assets/'
 
 GRAPHENE = {
-    'SCHEMA': 'grask.schema.schema' # Where your Graphene schema lives
+    'SCHEMA': 'grask.schema.schema',  # Where your Graphene schema lives
+    'MIDDLEWARE': ['graphql_jwt.middleware.JSONWebTokenMiddleware', ],
 }
 
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 CORS_ORIGIN_WHITELIST = [
-    'http://graskserver', # TODO
+    'http://graskserver',  # TODO
     ]
 
 CORS_ALLOW_CREDENTIALS = True
