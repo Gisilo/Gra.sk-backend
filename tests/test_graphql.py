@@ -1,5 +1,5 @@
 from django.test import TestCase
-from Grabit.models import Grabit
+from grabit.models import Grabit
 import json
 from django.test import TestCase
 from django.test import Client
