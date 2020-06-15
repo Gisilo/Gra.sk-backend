@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'graphene_django',
+    "graphql_auth",
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'grabit'
 ]
 
@@ -38,7 +40,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',  # TODO
+    # 'django.middleware.csrf.CsrfViewMiddleware',  # TODO
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -120,12 +122,33 @@ GRAPHENE = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'graphql_jwt.backends.JSONWebTokenBackend',
+    # 'graphql_jwt.backends.JSONWebTokenBackend',
+    "graphql_auth.backends.GraphQLAuthBackend",
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+GRAPHQL_JWT = {
+    #...
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.relay.Register",
+        "graphql_auth.relay.VerifyAccount",
+        "graphql_auth.relay.ResendActivationEmail",
+        "graphql_auth.relay.SendPasswordResetEmail",
+        "graphql_auth.relay.PasswordReset",
+        "graphql_auth.relay.ObtainJSONWebToken",
+        "graphql_auth.relay.VerifyToken",
+        "graphql_auth.relay.RefreshToken",
+        "graphql_auth.relay.RevokeToken",
+        "graphql_auth.relay.VerifySecondaryEmail",
+    ],
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+}
 
 CORS_ORIGIN_WHITELIST = [
     'http://graskserver',  # TODO
     ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

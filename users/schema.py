@@ -1,47 +1,34 @@
-from django.contrib.auth import get_user_model
-
 import graphene
-from graphene_django import DjangoObjectType
+
+from graphql_auth.schema import UserQuery, MeQuery
+from graphql_auth import relay, mutations
 
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = get_user_model()
+class AuthRelayMutation(graphene.ObjectType):
+    register = relay.Register.Field()
+    verify_account = relay.VerifyAccount.Field()
+    resend_activation_email = relay.ResendActivationEmail.Field()
+    send_password_reset_email = relay.SendPasswordResetEmail.Field()
+    password_reset = relay.PasswordReset.Field()
+    password_change = relay.PasswordChange.Field()
+    update_account = relay.UpdateAccount.Field()
+    archive_account = relay.ArchiveAccount.Field()
+    delete_account = relay.DeleteAccount.Field()
+    send_secondary_email_activation =  relay.SendSecondaryEmailActivation.Field()
+    verify_secondary_email = relay.VerifySecondaryEmail.Field()
+    swap_emails = relay.SwapEmails.Field()
+    remove_secondary_email = mutations.RemoveSecondaryEmail.Field()
+
+    # django-graphql-jwt inheritances
+    token_auth = relay.ObtainJSONWebToken.Field()
+    verify_token = relay.VerifyToken.Field()
+    refresh_token = relay.RefreshToken.Field()
+    revoke_token = relay.RevokeToken.Field()
 
 
-class Query(graphene.ObjectType):
-    me = graphene.Field(UserType)
-    users = graphene.List(UserType)
-
-    def resolve_users(self, info):
-        return get_user_model().objects.all()
-
-    def resolve_me(self, info):
-        user = info.context.user
-        if user.is_anonymous:
-            raise Exception('Not logged in!')
-
-        return user
+class Query(UserQuery, MeQuery, graphene.ObjectType):
+    pass
 
 
-class CreateUser(graphene.Mutation):
-    user = graphene.Field(UserType)
-
-    class Arguments:
-        username = graphene.String(required=True)
-        password = graphene.String(required=True)
-        email = graphene.String(required=True)
-
-    def mutate(self, info, username, password, email):
-        user = get_user_model()(
-            username=username,
-            email=email,
-        )
-        user.set_password(password)
-        user.save()
-
-        return CreateUser(user=user)
-
-
-class Mutation(graphene.ObjectType):
-    create_user = CreateUser.Field()
+class Mutation(AuthRelayMutation, graphene.ObjectType):
+    pass
