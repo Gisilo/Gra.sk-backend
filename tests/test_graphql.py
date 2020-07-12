@@ -1,5 +1,6 @@
 from django.test import TestCase
 from grabit.models import Grabit
+from django.contrib.auth.models import User
 import json
 from django.test import TestCase
 from django.test import Client
@@ -10,6 +11,7 @@ class GraphQLTestCase(TestCase):
     def setUp(self):
         Grabit.objects.create(name="pro_prova_1")
         Grabit.objects.create(name="pro_prova_2")
+        User.objects.create(pk=1, username="pro_prova_user")
         self._client = Client()
 
     def query(self, query: str, op_name: str = None, input: dict = None):
@@ -89,6 +91,7 @@ class GraphQLTestCase(TestCase):
               createGrabit(
                 input: {
                   name: "pro_create_mutation1"
+                  owner: "1"
                 }
               ){grabit{
                 name
