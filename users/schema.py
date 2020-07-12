@@ -3,7 +3,6 @@ import graphene
 from graphql_auth.schema import UserQuery, MeQuery
 from graphql_auth import relay, mutations
 
-
 class AuthRelayMutation(graphene.ObjectType):
     register = relay.Register.Field()
     verify_account = relay.VerifyAccount.Field()
