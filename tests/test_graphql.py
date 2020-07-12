@@ -1,5 +1,6 @@
 from django.test import TestCase
 from grabit.models import Grabit
+from django.contrib.auth.models import User
 import json
 from django.test import TestCase
 from django.test import Client
@@ -8,8 +9,9 @@ from django.test import Client
 class GraphQLTestCase(TestCase):
 
     def setUp(self):
-        Grabit.objects.create(name_project="pro_prova_1")
-        Grabit.objects.create(name_project="pro_prova_2")
+        Grabit.objects.create(name="pro_prova_1")
+        Grabit.objects.create(name="pro_prova_2")
+        User.objects.create(pk=1, username="pro_prova_user")
         self._client = Client()
 
     def query(self, query: str, op_name: str = None, input: dict = None):
@@ -53,7 +55,7 @@ class GraphQLTestCase(TestCase):
               allGrabits{
                 edges{
                   node{
-                    nameProject
+                    name
                   }
                 }
                 
@@ -68,12 +70,12 @@ class GraphQLTestCase(TestCase):
               "edges": [
                 {
                   "node": {
-                    "nameProject": "pro_prova_1"
+                    "name": "pro_prova_1"
                   }
                 },
                 {
                   "node": {
-                    "nameProject": "pro_prova_2"
+                    "name": "pro_prova_2"
                   }
                 }
               ]
@@ -88,10 +90,11 @@ class GraphQLTestCase(TestCase):
             mutation CreateGrabitByName{
               createGrabit(
                 input: {
-                  nameProject: "pro_create_mutation1"
+                  name: "pro_create_mutation1"
+                  owner: "1"
                 }
               ){grabit{
-                nameProject
+                name
               }
               }
             }
@@ -102,7 +105,7 @@ class GraphQLTestCase(TestCase):
         exp = {
             "createGrabit": {
               "grabit": {
-                "nameProject": "pro_create_mutation1"
+                "name": "pro_create_mutation1"
               }
             }
         }
@@ -115,7 +118,7 @@ class GraphQLTestCase(TestCase):
             mutation DeleteGrabitByName{
                     deleteGrabit(
                         input: {
-                            nameProject: "pro_prova_1"
+                            name: "pro_prova_1"
                     }){
                         msg
                     }

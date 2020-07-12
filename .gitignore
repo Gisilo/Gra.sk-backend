@@ -1,5 +1,5 @@
 venv/
-
+.vscode
 .idea/
 
 .env.dev
