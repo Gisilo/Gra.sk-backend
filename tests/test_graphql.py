@@ -53,7 +53,7 @@ class GraphQLTestCase(TestCase):
               allGrabits{
                 edges{
                   node{
-                    nameProject
+                    name
                   }
                 }
                 
@@ -68,12 +68,12 @@ class GraphQLTestCase(TestCase):
               "edges": [
                 {
                   "node": {
-                    "nameProject": "pro_prova_1"
+                    "name": "pro_prova_1"
                   }
                 },
                 {
                   "node": {
-                    "nameProject": "pro_prova_2"
+                    "name": "pro_prova_2"
                   }
                 }
               ]
@@ -88,10 +88,10 @@ class GraphQLTestCase(TestCase):
             mutation CreateGrabitByName{
               createGrabit(
                 input: {
-                  nameProject: "pro_create_mutation1"
+                  name: "pro_create_mutation1"
                 }
               ){grabit{
-                nameProject
+                name
               }
               }
             }
@@ -102,7 +102,7 @@ class GraphQLTestCase(TestCase):
         exp = {
             "createGrabit": {
               "grabit": {
-                "nameProject": "pro_create_mutation1"
+                "name": "pro_create_mutation1"
               }
             }
         }
@@ -115,7 +115,7 @@ class GraphQLTestCase(TestCase):
             mutation DeleteGrabitByName{
                     deleteGrabit(
                         input: {
-                            nameProject: "pro_prova_1"
+                            name: "pro_prova_1"
                     }){
                         msg
                     }
