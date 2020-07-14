@@ -1,7 +1,15 @@
 import graphene
 
-from graphql_auth.schema import UserQuery, MeQuery
+from graphql_auth.schema import UserQuery
+from graphene_django import DjangoObjectType
 from graphql_auth import relay, mutations
+from django.contrib.auth import get_user_model
+
+
+class UserType(DjangoObjectType):
+    class Meta:
+        model = get_user_model()
+        fields = ("id", "username", "email")
 
 class AuthRelayMutation(graphene.ObjectType):
     register = relay.Register.Field()
@@ -25,7 +33,7 @@ class AuthRelayMutation(graphene.ObjectType):
     revoke_token = relay.RevokeToken.Field()
 
 
-class Query(UserQuery, MeQuery, graphene.ObjectType):
+class Query(UserQuery, graphene.ObjectType):
     pass
 
 

@@ -2,16 +2,30 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-
+import django_filters
 from django.contrib.auth.models import User
 from .models import Grabit
+
+class GrabitFilter(django_filters.FilterSet):
+    # Do case-insensitive lookups on 'name'
+    name = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
+
+    class Meta:
+        model = Grabit
+        fields = ['owner']
+
+    @property
+    def qs(self):
+        print(f"AOOOOOOOOOOOOOO {self.request.user}", flush=True)
+        # The query context can be found in self.request.
+        return super(GrabitFilter, self).qs.filter(owner=self.request.user)
 
 # Graphene will automatically map the Grabit model's fields onto the GrabitNode.
 # This is configured in the GrabitNode's Meta class (as you can see below)
 class GrabitNode(DjangoObjectType):
     class Meta:
         model = Grabit
-        filter_fields = ['creation_date', 'update_date']
+        filterset_class=GrabitFilter
         interfaces = (graphene.relay.Node, )
 
 
@@ -39,18 +53,12 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
         owner = input.get("owner")
         try:
             user_owner = User.objects.get(pk=int(owner))
-
             new_grabit, created = Grabit.objects.update_or_create(name=name, owner=user_owner)
-
             msg = f"Created new grabit {name}" if created else f"Updated grabit {name}"
-
             return CreateGrabit(msg=msg, grabit=new_grabit)
-
         except Exception as e: 
             print(f"Error when creating or updating grabit {name}. {e}", flush=True)
             return CreateGrabit(msg=f"Can't create or update grabit {name}")
-
-        #grabit.save()
 
 
 class DeleteGrabit(graphene.relay.ClientIDMutation):
