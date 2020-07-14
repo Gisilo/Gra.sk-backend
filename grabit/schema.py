@@ -23,6 +23,9 @@ class GrabitFilter(django_filters.FilterSet):
 # Graphene will automatically map the Grabit model's fields onto the GrabitNode.
 # This is configured in the GrabitNode's Meta class (as you can see below)
 class GrabitNode(DjangoObjectType):
+
+    id = graphene.ID(source='pk', required=True)
+
     class Meta:
         model = Grabit
         filterset_class=GrabitFilter
@@ -38,27 +41,44 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
     grabit = graphene.Field(GrabitNode)
 
     class Input:
-        name = graphene.String(required=True)
+        id = graphene.String(required=True)
+        name = graphene.String()
         description = graphene.String()
         creation_date = graphene.DateTime()
         update_date = graphene.DateTime()
         graph = graphene.String()
-        owner = graphene.String()
+        owner = graphene.String(required=True)
 
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
-        
-        name = input.get("name")
+
+        id = input.get("id")
         owner = input.get("owner")
+        graph = input.get("graph")
         try:
             user_owner = User.objects.get(pk=int(owner))
-            new_grabit, created = Grabit.objects.update_or_create(name=name, owner=user_owner)
-            msg = f"Created new grabit {name}" if created else f"Updated grabit {name}"
+            new_grabit, created = cls.add_grabit(id=id, owner=user_owner, graph=graph)
+            msg = f"Created new grabit {id}" if created else f"Updated grabit {id}"
             return CreateGrabit(msg=msg, grabit=new_grabit)
         except Exception as e: 
-            print(f"Error when creating or updating grabit {name}. {e}", flush=True)
-            return CreateGrabit(msg=f"Can't create or update grabit {name}")
+            print(f"Error when creating or updating grabit {id}. {e}", flush=True)
+            return CreateGrabit(msg=f"Can't create or update grabit {id}")
+
+    @classmethod
+    def add_grabit(self, id, owner, graph=None):
+        if graph is None:
+            return self.create_grabit(id, owner)
+        else:
+            return self.update_grabit(id, owner, graph)
+
+    @classmethod
+    def create_grabit(self, id, owner):
+        return Grabit.objects.update_or_create(id=id, owner=owner)
+
+    @classmethod
+    def update_grabit(self, id, owner, graph):
+        return Grabit.objects.update_or_create(id=id, owner=owner, graph=graph)
 
 
 class DeleteGrabit(graphene.relay.ClientIDMutation):
