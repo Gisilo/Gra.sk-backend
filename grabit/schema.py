@@ -78,7 +78,7 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
 
     @classmethod
     def update_grabit(self, id, owner, graph):
-        return Grabit.objects.update_or_create(id=id, owner=owner, graph=graph)
+        return Grabit.objects.update_or_create(id=id, owner=owner, defaults={'graph': graph})
 
 
 class DeleteGrabit(graphene.relay.ClientIDMutation):
