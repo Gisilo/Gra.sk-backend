@@ -8,17 +8,12 @@ from .models import Grabit
 
 class GrabitFilter(django_filters.FilterSet):
     # Do case-insensitive lookups on 'name'
-    name = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
+    id = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
+    owner = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
 
     class Meta:
         model = Grabit
-        fields = ['owner']
-
-    @property
-    def qs(self):
-        print(f"AOOOOOOOOOOOOOO {self.request.user}", flush=True)
-        # The query context can be found in self.request.
-        return super(GrabitFilter, self).qs.filter(owner=self.request.user)
+        fields = ['id', 'owner']
 
 # Graphene will automatically map the Grabit model's fields onto the GrabitNode.
 # This is configured in the GrabitNode's Meta class (as you can see below)
@@ -57,8 +52,10 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
         owner = input.get("owner")
         graph = input.get("graph")
         try:
+            print(f"prima user {graph}", flush=True)
             user_owner = User.objects.get(pk=int(owner))
             new_grabit, created = cls.add_grabit(id=id, owner=user_owner, graph=graph)
+            print(f"sssssssssssssss {graph}", flush=True)
             msg = f"Created new grabit {id}" if created else f"Updated grabit {id}"
             return CreateGrabit(msg=msg, grabit=new_grabit)
         except Exception as e: 
