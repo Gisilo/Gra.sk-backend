@@ -5,15 +5,8 @@ from graphene_django.filter import DjangoFilterConnectionField
 import django_filters
 from django.contrib.auth.models import User
 from .models import Grabit
+from django.db.models import Q
 
-class GrabitFilter(django_filters.FilterSet):
-    # Do case-insensitive lookups on 'name'
-    id = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
-    owner = django_filters.LookupChoiceFilter(lookup_choices=[('exact', 'Equals'),])
-
-    class Meta:
-        model = Grabit
-        fields = ['id', 'owner']
 
 # Graphene will automatically map the Grabit model's fields onto the GrabitNode.
 # This is configured in the GrabitNode's Meta class (as you can see below)
@@ -23,13 +16,27 @@ class GrabitNode(DjangoObjectType):
 
     class Meta:
         model = Grabit
-        filterset_class=GrabitFilter
+        filter_fields = ['id', 'owner']
         interfaces = (graphene.relay.Node, )
 
 
 class Query(graphene.ObjectType):
-    grabit = graphene.relay.Node.Field(GrabitNode)
+
+    get_grabits_by_id_and_owner = graphene.List(GrabitNode, id=graphene.String(), owner=graphene.String())
+    get_grabits_of_owner = graphene.List(GrabitNode, owner=graphene.String())
     all_grabits = DjangoFilterConnectionField(GrabitNode)
+
+
+    def resolve_get_grabits_by_id_and_owner(self, info, id, owner):
+        user_owner = User.objects.get(pk=int(owner))
+        filter = (Q(id__exact = id) & Q(owner__exact = user_owner))
+        return Grabit.objects.filter(filter)
+
+    def resolve_get_grabits_of_owner(self, info, owner):
+        user_owner = User.objects.get(pk=int(owner))
+        filter = Q(owner__exact=user_owner)
+        return Grabit.objects.filter(filter)
+
 
 class CreateGrabit(graphene.relay.ClientIDMutation):
     msg = graphene.String()
