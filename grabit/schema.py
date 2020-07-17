@@ -43,7 +43,7 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
     grabit = graphene.Field(GrabitNode)
 
     class Input:
-        id = graphene.String(required=True)
+        id = graphene.String()
         name = graphene.String()
         description = graphene.String()
         creation_date = graphene.DateTime()
@@ -58,11 +58,15 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
         id = input.get("id")
         owner = input.get("owner")
         graph = input.get("graph")
+        description = input.get("description")
+        name = input.get("name")
+
         try:
             print(f"prima user {graph}", flush=True)
             user_owner = User.objects.get(pk=int(owner))
-            new_grabit, created = cls.add_grabit(id=id, owner=user_owner, graph=graph)
-            print(f"sssssssssssssss {graph}", flush=True)
+            new_grabit, created = cls.add_grabit(id=id, name=name,
+                                                 owner=user_owner, graph=graph, description=description)
+
             msg = f"Created new grabit {id}" if created else f"Updated grabit {id}"
             return CreateGrabit(msg=msg, grabit=new_grabit)
         except Exception as e: 
@@ -70,18 +74,28 @@ class CreateGrabit(graphene.relay.ClientIDMutation):
             return CreateGrabit(msg=f"Can't create or update grabit {id}")
 
     @classmethod
-    def add_grabit(self, id, owner, graph=None):
-        if graph is None:
-            return self.create_grabit(id, owner)
+    def add_grabit(self, owner, name, id=None, description=None, graph=None):
+        if not id:
+            return self.create_grabit(name, owner, description, graph)
         else:
-            return self.update_grabit(id, owner, graph)
+            return self.update_grabit(id, owner, graph, description)
+
+        '''
+        if graph is None:
+            return self.create_grabit(id, owner, description)
+        else:
+            return self.update_grabit(id, owner, graph, description)
+        '''
 
     @classmethod
-    def create_grabit(self, id, owner):
-        return Grabit.objects.update_or_create(id=id, owner=owner)
+    def create_grabit(self, name, owner, description, graph):
+        new_values = {'name': name, 'owner': owner, 'description': description, 'graph': graph}
+        obj = Grabit(**new_values)
+        obj.save()
+        return obj, True
 
     @classmethod
-    def update_grabit(self, id, owner, graph):
+    def update_grabit(self, id, owner, graph, description):
         return Grabit.objects.update_or_create(id=id, owner=owner, defaults={'graph': graph})
 
 
