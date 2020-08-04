@@ -85,11 +85,16 @@ class DeleteGrabit(graphene.relay.ClientIDMutation):
 
     class Input:
         name = graphene.String(required=True)
+        owner = graphene.String(required=True)
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
-        obj = Grabit.objects.get(name=input["name"])
+
+        owner = input.get("owner")
+
         try:
+            user_owner = User.objects.get(pk=int(owner))
+            obj = Grabit.objects.get(name=input["name"], owner=user_owner)
             obj.delete()
             msg = "Successful delete project {}".format(input["name"])
         except:
